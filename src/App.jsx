@@ -15,14 +15,32 @@ function App() {
 
   useEffect(() => {
     inputRef.current[0].focus();
+
+    inputRef.current[0].addEventListener("paste", pasteOTP);
+
+    return () => inputRef.current[0].removeEventListener("paste", pasteOTP);
   }, []);
+
+  const pasteOTP = (event) => {
+    const pasteValue = event.clipboardData.getData("text");
+
+    const tempObject = {};
+    Object.keys(otp).forEach((keys, index) => {
+      tempObject[keys] = pasteValue[index];
+    });
+
+    setOtp(tempObject);
+    inputRef.current[5].focus();
+  };
 
   const handleChnge = (event, index) => {
     const { name, value } = event.target;
 
+    if (/[a-z]/gi.test(value)) return;
+
     setOtp((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value.slice(-1),
     }));
 
     // event.target.nextSibling.focus();
@@ -42,8 +60,8 @@ function App() {
       <input
         ref={(ele) => (inputRef.current[index] = ele)}
         key={index}
-        maxLength="1"
         name={keys}
+        value={otp[keys]}
         type="text"
         className="w-16 h-12 rounded-md mr-3 text-center text-xl"
         onChange={(event) => handleChnge(event, index)}
@@ -52,7 +70,7 @@ function App() {
     ));
   };
 
-  console.log(inputRef);
+  console.log(otp);
 
   return (
     <form action="">
