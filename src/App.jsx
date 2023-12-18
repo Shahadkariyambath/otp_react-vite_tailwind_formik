@@ -13,7 +13,7 @@ function App() {
     digitSix: "",
   });
 
-  const handlChnge = (event, index) => {
+  const handleChnge = (event, index) => {
     const { name, value } = event.target;
 
     setOtp((prev) => ({
@@ -22,8 +22,14 @@ function App() {
     }));
 
     // event.target.nextSibling.focus();
-    if (index < 5) {
+    if (value && index < 5) {
       inputRef.current[index + 1].focus();
+    }
+  };
+
+  const handleBack = (event, index) => {
+    if (event.key === "Backspace" && index > 0) {
+      inputRef.current[index - 1].focus();
     }
   };
 
@@ -36,7 +42,8 @@ function App() {
         name={keys}
         type="text"
         className="w-16 h-12 rounded-md mr-3 text-center text-xl"
-        onChange={(event) => handlChnge(event, index)}
+        onChange={(event) => handleChnge(event, index)}
+        onKeyUp={(event) => handleBack(event, index)}
       />
     ));
   };
