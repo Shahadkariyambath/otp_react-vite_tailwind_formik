@@ -3,6 +3,23 @@ import { Formik, useFormik } from "formik";
 import "./App.css";
 
 function App() {
+  const validate = (values) => {
+    const errors = {};
+
+    // if (values.otp[0] === "") {
+    //   errors.otp = "This field is reqired";
+    // }
+
+    // if (Object.values(values.otp).some((data) => data === "")) {
+    //   errors.otp = "All fields are required";
+    // }
+
+    if (values.otp.some((data) => data === "")) {
+      errors.otp = "All fields are required";
+    }
+    return errors;
+  };
+
   const inputRef = useRef({});
 
   const formik = useFormik({
@@ -17,8 +34,9 @@ function App() {
       // },
       otp: Array.from({ length: 6 }).fill(""),
     },
+    validate,
     onSubmit: (values) => {
-      console.log(values);
+      console.log(values.otp.join());
     },
   });
 
@@ -129,6 +147,9 @@ function App() {
         <div>{inputRenderOtp()}</div>
       </Formik>
 
+      {formik.errors.otp && (
+        <p className="mt-3 text-sm text-red-400">Please fill all the field</p>
+      )}
       <button
         type="button"
         className="mt-4 w-32 border border-solid bg-[#3b3b3b] rounded hover:bg-[#252525] hover:border-[#3b3b3b]"
