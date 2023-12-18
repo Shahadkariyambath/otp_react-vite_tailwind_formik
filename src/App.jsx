@@ -1,17 +1,37 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { Formik, useFormik } from "formik";
 import "./App.css";
 
 function App() {
   const inputRef = useRef({});
 
-  const [otp, setOtp] = useState({
-    digitOne: "",
-    digitTwo: "",
-    digitThree: "",
-    digitFour: "",
-    digitFive: "",
-    digitSix: "",
+  const formik = useFormik({
+    initialValues: {
+      // otp: {
+      //   digitOne: "",
+      //   digitTwo: "",
+      //   digitThree: "",
+      //   digitFour: "",
+      //   digitFive: "",
+      //   digitSix: "",
+      // },
+      otp: Array.from({ length: 6 }).fill(""),
+    },
+    onSubmit: (values) => {
+      console.log(values);
+    },
   });
+
+  // console.log(formik.values);
+
+  // const [otp, setOtp] = useState({
+  //   digitOne: "",
+  //   digitTwo: "",
+  //   digitThree: "",
+  //   digitFour: "",
+  //   digitFive: "",
+  //   digitSix: "",
+  // });
 
   useEffect(() => {
     inputRef.current[0].focus();
@@ -24,24 +44,56 @@ function App() {
   const pasteOTP = (event) => {
     const pasteValue = event.clipboardData.getData("text");
 
-    const tempObject = {};
-    Object.keys(otp).forEach((keys, index) => {
-      tempObject[keys] = pasteValue[index];
+    const currentOTP = [...formik.values.otp];
+
+    formik.values.otp.forEach((value, index) => {
+      currentOTP[index] = pasteValue[index];
     });
 
-    setOtp(tempObject);
+    formik.setValues((prev) => ({
+      ...prev,
+      otp: currentOTP,
+    }));
+
+    // const tempObject = {};
+
+    // Object.keys(otp).forEach((keys, index) => {
+    //   tempObject[keys] = pasteValue[index];
+    // });
+
+    // formik.setValues(tempObject);
+
+    // setOtp(tempObject);
+
     inputRef.current[5].focus();
   };
 
   const handleChnge = (event, index) => {
-    const { name, value } = event.target;
+    // const { name, value } = event.target;
+    const { value } = event.target;
 
     if (/[a-z]/gi.test(value)) return;
 
-    setOtp((prev) => ({
+    const currentOTP = [...formik.values.otp];
+    currentOTP[index] = value.slice(-1);
+
+    // formik.setValues((prev) => ({
+    //   ...prev,
+    //   otp: {
+    //     ...prev.otp,
+    //     [name]: value,
+    //   },
+    // }));
+
+    formik.setValues((prev) => ({
       ...prev,
-      [name]: value.slice(-1),
+      otp: currentOTP,
     }));
+
+    // setOtp((prev) => ({
+    //   ...prev,
+    //   [name]: value.slice(-1),
+    // }));
 
     // event.target.nextSibling.focus();
     if (value && index < 5) {
@@ -56,12 +108,12 @@ function App() {
   };
 
   const inputRenderOtp = () => {
-    return Object.keys(otp).map((keys, index) => (
+    return formik.values.otp.map((values, index) => (
       <input
         ref={(ele) => (inputRef.current[index] = ele)}
         key={index}
-        name={keys}
-        value={otp[keys]}
+        name={index}
+        value={values}
         type="text"
         className="w-16 h-12 rounded-md mr-3 text-center text-xl"
         onChange={(event) => handleChnge(event, index)}
@@ -70,13 +122,18 @@ function App() {
     ));
   };
 
-  console.log(otp);
-
   return (
     <form action="">
       <h3 className="text-3xl mb-8">Please fill the OTP</h3>
-      <div>{inputRenderOtp()}</div>
-      <button className="mt-4 w-32 border border-solid bg-[#3b3b3b] rounded hover:bg-[#252525] hover:border-[#3b3b3b]">
+      <Formik>
+        <div>{inputRenderOtp()}</div>
+      </Formik>
+
+      <button
+        type="button"
+        className="mt-4 w-32 border border-solid bg-[#3b3b3b] rounded hover:bg-[#252525] hover:border-[#3b3b3b]"
+        onClick={formik.handleSubmit}
+      >
         Submit
       </button>
     </form>
