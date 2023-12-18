@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./App.css";
 
 function App() {
@@ -12,6 +12,10 @@ function App() {
     digitFive: "",
     digitSix: "",
   });
+
+  useEffect(() => {
+    inputRef.current[0].focus();
+  }, []);
 
   const handleChnge = (event, index) => {
     const { name, value } = event.target;
