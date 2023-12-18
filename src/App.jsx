@@ -2,6 +2,8 @@ import { useRef, useState } from "react";
 import "./App.css";
 
 function App() {
+  const inputRef = useRef({});
+
   const [otp, setOtp] = useState({
     digitOne: "",
     digitTwo: "",
@@ -18,11 +20,14 @@ function App() {
       ...prev,
       [name]: value,
     }));
+
+    event.target.nextSibling.focus();
   };
 
   const inputRenderOtp = () => {
     return Object.keys(otp).map((keys, index) => (
       <input
+        ref={(ele) => (inputRef.current[index] = ele)}
         key={index}
         maxLength="1"
         name={keys}
@@ -32,6 +37,8 @@ function App() {
       />
     ));
   };
+
+  console.log(inputRef);
 
   return (
     <form action="">
