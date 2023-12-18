@@ -13,7 +13,7 @@ function App() {
     digitSix: "",
   });
 
-  const handlChnge = (event) => {
+  const handlChnge = (event, index) => {
     const { name, value } = event.target;
 
     setOtp((prev) => ({
@@ -21,7 +21,10 @@ function App() {
       [name]: value,
     }));
 
-    event.target.nextSibling.focus();
+    // event.target.nextSibling.focus();
+    if (index < 5) {
+      inputRef.current[index + 1].focus();
+    }
   };
 
   const inputRenderOtp = () => {
@@ -33,7 +36,7 @@ function App() {
         name={keys}
         type="text"
         className="w-16 h-12 rounded-md mr-3 text-center text-xl"
-        onChange={handlChnge}
+        onChange={(event) => handlChnge(event, index)}
       />
     ));
   };
